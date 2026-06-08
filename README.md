@@ -88,23 +88,53 @@ JSON Response
 
 The model combines two complementary learning branches:
 
-### Branch 1 — Character Sequence Learning
+### Branch 1 — Character-Level Deep Sequence Encoder
+
+The first branch is responsible for learning discriminative representations directly from raw URL character sequences. It combines convolutional feature extraction with bidirectional recurrent context modeling to capture both local malicious patterns and long-range dependencies.
 
 ```text
-Input URL
-    ↓
+URL Character Sequence
+        │
+        ▼
 Embedding Layer
-    ↓
-Conv1D
-    ↓
-BiGRU
+(VOCAB_SIZE → EMBEDDING_DIM)
+        │
+        ▼
+Conv1D (128 Filters, Kernel=3)
+        │
+Batch Normalization
+        │
+ReLU Activation
+        │
+        ▼
+Conv1D (128 Filters, Kernel=4)
+        │
+Batch Normalization
+        │
+ReLU Activation
+        │
+        ▼
+MaxPooling1D
+        │
+Dropout (0.30)
+        │
+        ▼
+Bidirectional GRU (128 Units)
+        │
+        ▼
+Learned URL Sequence Representation
 ```
 
-This branch captures:
+#### Purpose of this Branch
 
-* Suspicious character patterns
-* Obfuscation techniques
-* Sequential URL relationships
+* **Embedding Layer** transforms URL characters into dense vector representations.
+* **Convolutional Layers** detect suspicious local patterns frequently observed in phishing and malicious URLs.
+* **Batch Normalization** stabilizes training and accelerates convergence.
+* **MaxPooling** reduces dimensionality while preserving dominant features.
+* **Dropout** improves generalization and reduces overfitting.
+* **Bidirectional GRU** captures sequential context from both directions, enabling the model to understand structural relationships across the entire URL.
+
+This branch produces a high-level semantic representation of the URL's character sequence before fusion with handcrafted lexical features.
 
 ### Branch 2 — Lexical Feature Learning
 
@@ -127,9 +157,35 @@ Numerical Features
 Dense Layers
 ```
 
-### Fusion Layer
+### Feature Fusion & Classification Head
 
-Both branches are concatenated and passed through fully connected layers to generate the final threat probability.
+To leverage both learned deep representations and handcrafted cybersecurity features, the outputs from the sequence encoder and the lexical feature encoder are fused through a feature concatenation layer.
+
+```text
+Sequence Encoder Output
+          │
+          ├─────────────┐
+          │             │
+          ▼             ▼
+     Concatenation Layer
+              │
+              ▼
+Dense (256) + ReLU
+Batch Normalization
+Dropout (0.40)
+              │
+              ▼
+Dense (128) + ReLU
+Dropout (0.30)
+              │
+              ▼
+Sigmoid Output Layer
+              │
+              ▼
+Malicious Probability Score
+```
+
+The classification head applies regularized fully connected layers with L2 regularization, batch normalization, and dropout to improve robustness and generalization while producing a calibrated maliciousness probability score.
 
 ---
 

@@ -1,79 +1,287 @@
-# 🛡️ End-to-End Malicious URL Detection System
+# 🛡️ Malicious URL Detection System
+
+### Hybrid Deep Learning Pipeline for Real-Time Phishing and Malicious URL Detection
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue.svg)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-DeepLearning-orange.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-## 📌 Overview
-This repository hosts a complete, production-ready AI system designed to detect and classify URLs as **Benign** or **Malicious**. The project goes beyond model training by deploying the hybrid deep learning model via a robust **FastAPI** backend and an interactive **Streamlit** frontend. 
+---
 
-The underlying AI model utilizes a **Hybrid Neural Network (1D CNN + BiGRU + Dense)** to analyze spatial character patterns, sequential context, and handcrafted lexical features with high precision.
+## 📖 Project Overview
 
-## 🏗️ System Architecture
-The project is built using a modern microservice-like approach, separated into three core components:
+Malicious URLs remain one of the most common attack vectors used in phishing campaigns, malware distribution, and credential theft.
 
-1. **The Deep Learning Model (`build_classifier.ipynb`):**
-   * Processes tokenized text sequences via Embedding, Conv1D, and Bidirectional GRU layers.
-   * Processes 10 manual digital features (e.g., entropy, IP presence, path length) via a Dense network.
-   * Concatenates outputs to provide a final threat probability score.
-   * Uses **Domain-Aware Splitting** during training to prevent data leakage.
+This project presents a complete end-to-end AI-powered detection system capable of classifying URLs as **Benign** or **Malicious** in real time.
 
-2. **The Backend API (`main.py`):**
-   * Built with **FastAPI** for high performance and asynchronous request handling.
-   * Uses FastAPI `lifespan` to load the pre-trained Keras model (`best_url_model (2)_final.keras`) and StandardScaler (`scaler (2).pickle`) into memory at startup.
-   * Exposes a `POST /predict` endpoint that handles incoming URL requests, processes them using the custom `URLPreprocessor`, and returns a JSON response with the threat label and confidence score.
+Unlike traditional blacklist-based approaches, the system leverages a **Hybrid Deep Learning Architecture (CNN + BiGRU + Dense Features Network)** that learns both:
 
-3. **The Frontend UI (`UI.py`):**
-   * A clean, interactive **Streamlit** web application.
-   * Takes user input, sends a POST request to the deployed FastAPI backend, and renders visual alerts based on the URL's safety status.
+* Character-level URL patterns
+* Sequential URL structures
+* Handcrafted lexical and statistical features
+
+The solution is deployed as a production-ready application using:
+
+* FastAPI for serving predictions
+* Streamlit for user interaction
+* TensorFlow/Keras for deep learning inference
+
+---
+
+## 🎯 Key Features
+
+✅ Real-time malicious URL classification
+
+✅ Hybrid Neural Network Architecture
+
+✅ Character-level URL representation
+
+✅ Manual lexical feature extraction
+
+✅ FastAPI REST API deployment
+
+✅ Interactive Streamlit dashboard
+
+✅ Domain-aware train/validation/test splitting
+
+✅ Confidence score estimation
+
+✅ Production-ready inference pipeline
+
+---
+
+## 🏛️ System Architecture
+
+```text
+User
+ │
+ ▼
+Streamlit Frontend
+ │
+ ▼
+FastAPI Backend
+ │
+ ▼
+URL Preprocessor
+ │
+ ├── Character Tokenization
+ └── Lexical Feature Extraction
+ │
+ ▼
+Hybrid Neural Network
+(CNN + BiGRU + Dense)
+ │
+ ▼
+Prediction + Confidence Score
+ │
+ ▼
+JSON Response
+```
+
+---
+
+## 🧠 Deep Learning Model
+
+### Hybrid Architecture
+
+The model combines two complementary learning branches:
+
+### Branch 1 — Character Sequence Learning
+
+```text
+Input URL
+    ↓
+Embedding Layer
+    ↓
+Conv1D
+    ↓
+BiGRU
+```
+
+This branch captures:
+
+* Suspicious character patterns
+* Obfuscation techniques
+* Sequential URL relationships
+
+### Branch 2 — Lexical Feature Learning
+
+Examples of extracted features:
+
+* URL Length
+* Domain Length
+* Path Length
+* Entropy
+* Digit Count
+* Special Character Count
+* IP Address Usage
+* HTTPS Usage
+* Subdomain Count
+* Suspicious Token Indicators
+
+```text
+Numerical Features
+      ↓
+Dense Layers
+```
+
+### Fusion Layer
+
+Both branches are concatenated and passed through fully connected layers to generate the final threat probability.
+
+---
 
 ## 📂 Repository Structure
 
 ```text
-├── .gitignore
+.
+├── build_classifier.ipynb
+├── preprocess_url.py
+├── main.py
+├── UI.py
+├── scaler (2).pickle
+├── best_url_model (2)_final.keras
 ├── requirements.txt
-├── main.py                          # FastAPI backend application
-├── UI.py                            # Streamlit frontend application
-├── preprocess_url.py                # Custom URL feature extraction class
-├── scaler (2).pickle                # Saved StandardScaler for numeric features
-├── best_url_model (2)_final.keras   # Trained Hybrid Neural Network
-└── build_classifier.ipynb           # Model training, evaluation, and EDA
+└── README.md
+```
 
-🚀 Installation & Running Locally
-1. Setup the Environment
-Clone the repository and install all required full-stack dependencies:
-git clone [https://github.com/hassanAlomari/Malicious-URL-Detection-Hybrid-NN.git](https://github.com/hassanAlomari/Malicious-URL-Detection-Hybrid-NN.git)
+---
+
+## ⚙️ Tech Stack
+
+| Layer           | Technology         |
+| --------------- | ------------------ |
+| Deep Learning   | TensorFlow / Keras |
+| API             | FastAPI            |
+| Frontend        | Streamlit          |
+| ML Utilities    | Scikit-Learn       |
+| Data Processing | Pandas, NumPy      |
+| Deployment      | Uvicorn            |
+
+---
+
+## 🚀 Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/hassanAlomari/Malicious-URL-Detection-Hybrid-NN.git
+
 cd Malicious-URL-Detection-Hybrid-NN
+```
 
-# Install required packages
-pip install fastapi uvicorn tensorflow scikit-learn pandas pydantic streamlit requests
+### Install Dependencies
 
-2. Start the FastAPI Backend
-Run the backend server to load the model and expose the API endpoint:
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ▶️ Running the Backend
+
+```bash
 uvicorn main:app --reload
-The API will be available at http://127.0.0.1:8000. You can view the interactive API documentation at http://127.0.0.1:8000/docs.
+```
 
-3. Start the Streamlit Frontend
-In a new terminal window, run the user interface:
+Backend URL:
+
+```text
+http://127.0.0.1:8000
+```
+
+Interactive API Docs:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## 💻 Running the Frontend
+
+```bash
 streamlit run UI.py
-Make sure the endpoint URL in UI.py points to your local FastAPI server (e.g., http://127.0.0.1:8000/predict) during local testing.
+```
 
-🔌 API Reference
-Endpoint: POST /predict
+---
 
-Request Body (JSON):
+## 🔌 API Example
+
+### Request
+
+```json
 {
-  "url": "[http://example-malicious-site.com](http://example-malicious-site.com)"
+  "url": "http://example-malicious-site.com"
 }
+```
 
-Response (JSON):
+### Response
+
+```json
 {
-  "url": "[http://example-malicious-site.com](http://example-malicious-site.com)",
-  "label": "Malicious 💀",
+  "url": "http://example-malicious-site.com",
+  "label": "Malicious",
   "confidence": 0.9845
 }
+```
 
+---
 
+## 📊 Model Performance
 
+Add your final metrics here:
 
+| Metric    | Score |
+| --------- | ----- |
+| Accuracy  | XX%   |
+| Precision | XX%   |
+| Recall    | XX%   |
+| F1 Score  | XX%   |
+| ROC-AUC   | XX%   |
+
+---
+
+## 📸 Application Preview
+
+Add screenshots of:
+
+* Streamlit Dashboard
+* Prediction Results
+* API Documentation
+
+Example:
+
+```markdown
+![Dashboard](images/dashboard.png)
+```
+
+---
+
+## 🔮 Future Improvements
+
+* Transformer-based URL Encoder
+* Explainable AI (XAI)
+* Docker Deployment
+* CI/CD Integration
+* Online Learning Pipeline
+* Threat Intelligence Integration
+
+---
+
+## 👨‍💻 Author
+
+**Hassan Alomari**
+
+AI & Machine Learning Engineer
+
+GitHub:
+https://github.com/hassanAlomari
+
+---
+
+## 📜 License
+
+This project is released under the MIT License.

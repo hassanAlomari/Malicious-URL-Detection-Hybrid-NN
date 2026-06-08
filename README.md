@@ -162,27 +162,28 @@ Dense Layers
 To leverage both learned deep representations and handcrafted cybersecurity features, the outputs from the sequence encoder and the lexical feature encoder are fused through a feature concatenation layer.
 
 ```text
-Sequence Encoder Output
-          │
-          ├─────────────┐
+      Sequence Encoder Output
+                 │
+                 ▼
+          ┌─────────────┐
           │             │
           ▼             ▼
-     Concatenation Layer
-              │
-              ▼
-Dense (256) + ReLU
-Batch Normalization
-Dropout (0.40)
-              │
-              ▼
-Dense (128) + ReLU
-Dropout (0.30)
-              │
-              ▼
-Sigmoid Output Layer
-              │
-              ▼
-Malicious Probability Score
+        Concatenation Layer
+                │
+                ▼
+        Dense (256) + ReLU
+        Batch Normalization
+          Dropout (0.40)
+                │
+                ▼
+        Dense (128) + ReLU
+          Dropout (0.30)
+                │
+                ▼
+        Sigmoid Output Layer
+                │
+                ▼
+        Malicious Probability Score
 ```
 
 The classification head applies regularized fully connected layers with L2 regularization, batch normalization, and dropout to improve robustness and generalization while producing a calibrated maliciousness probability score.
